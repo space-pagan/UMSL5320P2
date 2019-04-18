@@ -27,7 +27,7 @@ class individual:
         return self.__f
 
     def __repr__(self):
-        return str(['%5.3f' % s for s in self.values]) + '\t'+'%5.3f' % self.pure_fit + '\t' + '%5.3f' %self.p
+        return str(['%5.3f' % s for s in self.values]) + '\t'+'%5.3f' % self.pure_fit
 
 epsilon = 0.000000000000001
 evals = 0

@@ -1,4 +1,4 @@
-import selection_methods as sm
+import sample_methods as sm
 import crossover_methods as cm
 import mutation_methods as mm
 import random as r
@@ -18,16 +18,73 @@ Pc = 0.8
 #mutation:
 Pm = 0.1
 std = 0.02
+#ranking minimum expectation:
+rank_min = 0.1
+#truncate n elements:
+loss = 2
+#arithmetic weight:
+weight = 0.3
 #other:
 max_generations = 50
 
-def single_run():
+def distr(P, method):
+    #Distribution Methods:
+    #RWS
+    #rank
+    #truncate - must be used with tournament
+    #no_distr - must be used with tournament
+    if method == 'RWS':
+        return sm.RWS(P)
+    elif method == 'rank':
+        return sm.rank(P, rank_min)
+    elif method == 'truncate':
+        return sm.truncate(P, loss)
+    else:
+        return
+
+def sample(P, method):
+    #Sampling Methods:
+    #tournament_sample2
+    #p_sample - for RWS and rank
+    if method == 'tournament':
+        return sm.tournament_sample2(P)
+    elif method == 'p_sample':
+        return sm.p_sample(P)
+    else:
+        return
+
+def cross(P, method):
+    #Crossover Methods:
+    #single_point
+    #two_point
+    #arithmetic
+    if method == 'single_point':
+        return cm.single_point(P, n, Pc)
+    elif method == 'two_point':
+        return cm.two_point(P, n, Pc)
+    elif method == 'arithmetic':
+        return cm.arithmetic(P, n, Pc, weight)
+    else:
+        return None
+
+def mut(P, method):
+    #Mutation Methods:
+    #gaussian
+    #uniform
+    if method == 'gaussian':
+        return mm.gaussian(P, Pm, std, x_min, x_max)
+    elif method == 'uniform':
+        return mm.uniform(P, Pm, x_min, x_max)
+    else:
+        return None
+
+def single_run(fdistr, fsamp, fcross, fmut):
     #initialize
     gen_count = 1
     P = []
     while len(P) < N:
         P.append(individual(None, n, x_min, x_max))
-    sm.RWS(P)
+    distr(P, fdistr)
 
     for i in P:
         print(i)
@@ -35,21 +92,40 @@ def single_run():
     while gen_count < max_generations:
         P_next = []
         while len(P_next) < N:
-            i = mm.gaussian(cm.single_point((sm.RWS_sample(P, r.random()), sm.RWS_sample(P, r.random())), n, Pc), Pm, std)
-            if i:
-                P_next.append(i)
+            i1 = sample(P, fsamp)
+            i2 = sample(P, fsamp)
+            c = cross((i1, i2), fcross)
+            m = mut(c, fmut)
+            if m:
+                P_next.append(m)
 
         gen_count += 1
         P = P_next
-        sm.RWS(P) #calculate distribution
+        if fdistr != 'truncate' or gen_count < max_generations: #do not truncate last pop
+            distr(P, fdistr) #calculate distribution
 
     print('\n\n\n')
     for i in P:
         print(i)
     print('Total evaluations:', ind.evals)
 
-def multi_run():
-    print('Not yet implemented')
-
 if __name__ == "__main__":
-    single_run()
+    #Distribution Methods:
+    #RWS - must be used with p_sample
+    #rank - must be used with p_sample
+    #truncate - must be used with tournament
+    #no_distr - must be used with tournament
+
+    #Sampling Methods:
+    #tournament
+    #p_sample - for RWS and rank
+
+    #Crossover Methods:
+    #single_point
+    #two_point
+    #arithmetic
+
+    #Mutation Methods:
+    #gaussian
+    #uniform
+    single_run('rank', 'p_sample', 'single_point', 'gaussian')
