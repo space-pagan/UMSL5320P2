@@ -4,6 +4,7 @@ import mutation_methods as mm
 import random as r
 import ind
 from ind import individual
+import statistics
 
 #global variables:
 
@@ -80,52 +81,58 @@ def mut(P, method):
 
 def single_run(fdistr, fsamp, fcross, fmut):
     #initialize
+    best_of_run = individual([x_max, x_max, x_max]) #start with worst
     gen_count = 1
     P = []
     while len(P) < N:
         P.append(individual(None, n, x_min, x_max))
-    distr(P, fdistr)
-
-    for i in P:
-        print(i)
 
     while gen_count < max_generations:
+        distr(P, fdistr) #calculate distribution
+        for i in P:
+            if i.f > best_of_run.f:
+                best_of_run = i
         P_next = []
         while len(P_next) < N:
-            i1 = sample(P, fsamp)
-            i2 = sample(P, fsamp)
-            c = cross((i1, i2), fcross)
-            m = mut(c, fmut)
-            if m:
-                P_next.append(m)
+            i = mut(cross( (sample(P, fsamp), sample(P, fsamp)), fcross), fmut)
+            if i: #if not None
+                P_next.append(i)
 
         gen_count += 1
         P = P_next
-        if fdistr != 'truncate' or gen_count < max_generations: #do not truncate last pop
-            distr(P, fdistr) #calculate distribution
 
-    print('\n\n\n')
-    for i in P:
-        print(i)
     print('Total evaluations:', ind.evals)
+    return best_of_run
 
-if __name__ == "__main__":
-    #Distribution Methods:
-    #RWS - must be used with p_sample
-    #rank - must be used with p_sample
-    #truncate - must be used with tournament
-    #no_distr - must be used with tournament
 
-    #Sampling Methods:
-    #tournament
-    #p_sample - for RWS and rank
+#Distribution Methods:
+#RWS - must be used with p_sample
+#rank - must be used with p_sample
+#truncate - must be used with tournament
+#no_distr - must be used with tournament
 
-    #Crossover Methods:
-    #single_point
-    #two_point
-    #arithmetic
+#Sampling Methods:
+#tournament
+#p_sample - for RWS and rank
 
-    #Mutation Methods:
-    #gaussian
-    #uniform
-    single_run('rank', 'p_sample', 'single_point', 'gaussian')
+#Crossover Methods:
+#single_point
+#two_point
+#arithmetic
+
+#Mutation Methods:
+#gaussian
+#uniform
+multi_run = 30
+if multi_run:
+    best_of_run_data = []
+    for _ in range(multi_run):
+        best_of_run_data.append(single_run('RWS', 'p_sample', 'single_point', 'gaussian'))
+        ind.evals = 0
+    for i in best_of_run_data:
+        print(i)
+    best_of_run_fit = [i.pure_fit for i in best_of_run_data]
+    print('Average of BORs is', sum(best_of_run_fit)/len(best_of_run_fit))
+    print('Standard Deviation of BORs is', statistics.pstdev(best_of_run_fit))
+else:
+    single_run('RWS', 'p_sample', 'single_point', 'gaussian')
