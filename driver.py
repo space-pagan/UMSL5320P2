@@ -58,13 +58,13 @@ def cross(P, method):
     #Crossover Methods:
     #single_point
     #two_point
-    #arithmetic
+    #arithmatic
     if method == 'single_point':
         return cm.single_point(P, n, Pc)
     elif method == 'two_point':
         return cm.two_point(P, n, Pc)
-    elif method == 'arithmetic':
-        return cm.arithmetic(P, n, Pc, weight)
+    elif method == 'arithmatic':
+        return cm.arithmatic(P, n, Pc, weight)
     else:
         return None
 
@@ -118,7 +118,7 @@ def single_run(fdistr, fsamp, fcross, fmut):
 #Crossover Methods:
 #single_point
 #two_point
-#arithmetic
+#arithmatic
 
 #Mutation Methods:
 #gaussian
@@ -127,7 +127,7 @@ multi_run = 30
 if multi_run:
     best_of_run_data = []
     for _ in range(multi_run):
-        best_of_run_data.append(single_run('RWS', 'p_sample', 'single_point', 'gaussian'))
+        best_of_run_data.append(single_run('truncate', 'tournament', 'arithmatic', 'uniform'))
         ind.evals = 0
     for i in best_of_run_data:
         print(i)

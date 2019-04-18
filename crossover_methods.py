@@ -28,7 +28,7 @@ def two_point(Parents, n, Pc):
         return individual(child_values)
     return None #regenerate parent pair
 
-def arithmetic(Parents, n, Pc, weight):
+def arithmatic(Parents, n, Pc, weight):
     if r.random() < Pc:
         child_values = []
         for i in range(n):
