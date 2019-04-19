@@ -1,3 +1,9 @@
+'''
+Created on April 18, 2019
+
+@author: Zoya Samsonov
+'''
+
 import random as r
 
 class individual:
@@ -33,9 +39,30 @@ epsilon = 0.000000000000001
 evals = 0
 
 def pure_fitness(values):
+    '''Calculates the absolute fitness function.
+    
+    Arguments:
+        values {numerical iterable} -- The geneone of the individual for which
+            to compute a fitness.
+    
+    Returns:
+        float -- The fitness value
+    '''
+
     return sum([x**2 for x in values])
 
 def fitness(values):
+    '''Calculates an adjusted fitness value such that if minimizing,
+        the best fitness has a greater absolute value than the worst.
+    
+    Arguments:
+        values {numerical iterable} -- The geneone of the individual for which
+            to compute a fitness.
+    
+    Returns:
+        float -- The fitness value
+    '''
+
     global evals
     evals += 1
     return (1+epsilon)/(pure_fitness(values)+epsilon) #to avoid 1/0
