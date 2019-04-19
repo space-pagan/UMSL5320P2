@@ -10,6 +10,7 @@ import mutation_methods as mm
 import ind
 from ind import individual
 import statistics
+import sys
 
 #global variables:
 
@@ -165,16 +166,33 @@ def single_run(fdistr='RWS', fsamp='p_sample', fcross='single_point', fmut='gaus
     print('Total evaluations:', ind.evals)
     return best_of_run
 
-multi_run = 30
-if multi_run:
-    best_of_run_data = []
-    for _ in range(multi_run):
-        best_of_run_data.append(single_run('truncate', 'tournament', 'arithmatic', 'uniform'))
-        ind.evals = 0
-    for i in best_of_run_data:
-        print(i)
-    best_of_run_fit = [i.pure_fit for i in best_of_run_data]
-    print('Average of BORs is', sum(best_of_run_fit)/len(best_of_run_fit))
-    print('Standard Deviation of BORs is', statistics.pstdev(best_of_run_fit))
-else:
-    single_run('RWS', 'p_sample', 'single_point', 'gaussian')
+if __name__ == "__main__":
+    dmethod = 'RWS'
+    smethod = 'p_sample'
+    cmethod = 'single_point'
+    mmethod = 'gaussian'
+    mutli_run = 0
+    if len(sys.argv) > 1:
+        multi_run = int(sys.argv[1])
+    if len(sys.argv) > 2:
+        dmethod = sys.argv[2]
+    if len(sys.argv) > 3:
+        smethod = sys.argv[3]
+    if len(sys.argv) > 4:
+        cmethod = sys.argv[4]
+    if len(sys.argv) > 5:
+        mmethod = sys.argv[5]
+
+    if multi_run:
+        best_of_run_data = []
+        for _ in range(multi_run):
+            best_of_run_data.append(single_run(dmethod, smethod, cmethod, mmethod))
+            ind.evals = 0 #reset eval counter
+        for i in best_of_run_data:
+            print(i)
+        best_of_run_fit = [i.pure_fit for i in best_of_run_data]
+        print('Average of BORs is', sum(best_of_run_fit)/len(best_of_run_fit))
+        print('Standard Deviation of BORs is', statistics.pstdev(best_of_run_fit))
+    else:
+        bor = single_run(dmethod, smethod, cmethod, mmethod)
+        print('Best individual in run is', bor)
