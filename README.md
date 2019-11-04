@@ -1,5 +1,5 @@
-# UMSL5320P2
-Project 2 of Genetic Algs at UMSL, written by Zoya Samsonov on April 18, 2019.
+# P2
+Project 2 of [REDACTED], written by Zoya Samsonov on April 18, 2019.
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ pip install numpy
 Simply clone the project to your desired directory
 
 ```
-git clone https://github.com/space-pagan/UMSL5320P2.git
+git clone https://github.com/space-pagan/EVOP2.git
 ```
 
 ## Running the GA
